@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block page %}
+{#  Вывод статей по определенной категории  #}
+    {% for article in page_article_by_category.object_list %}
+        {% if article.moderation == True %}
+            <div class="card mb-3 article" style="text-align: center">
+                <p style="text-align: right">{{ article.author }}</p>
+                <p style="text-align: left"><a href="{% url 'blog-category' pk=article.category.id %}">{{ article.category }}</a></p>
+                <p style="text-align: center">
+                    <img src="{{ MEDIA_URL }}{{ article.img }}" class="img-rounded" style="width: 40rem; height: 20rem" alt="...">
+                </p>
+                <div class="card-body">
+                    <h5 class="card-title"><a href="{% url 'blog-article' pk=article.id %}">{{ article.title }}</a></h5>
+                    <p class="card-text">{{ article.short_description }}</p>
+                    <p class="card-text"><small class="text-muted">{{ article.date }}</small></p>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    {#      Пагинация статей         #}
+    <nav>
+        <ul class="pagination justify-content-center" style="margin:20px 0">
+            {% for n in page_article_by_category.paginator.page_range %}
+                {% if page_article_by_category.number == n %}
+                    <li class="page-item active">
+                        <a class="page-link" href="?page={{ n }}">{{ n }} <span class="sr-only">(current)</span></a>
+                    </li>
+                {% elif n > page_article_by_category.number|add:-3 and n < page_article_by_category.number|add:3 %}
+                    <li class="page-item"><a class="page-link" href="?page={{ n }}">{{ n }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+{% endblock %}

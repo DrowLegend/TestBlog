@@ -1,0 +1,15 @@
+{% extends 'base_signup.html' %}
+{% load bootstrap4 %}
+
+{% block title %}Вход{% endblock %}
+
+{% block heading %}Страница входа{% endblock %}
+
+{% block content %}
+    <form method="post">
+    {% csrf_token %}
+    {% bootstrap_form form  %}
+    <button type="submit" class="btn btn-red float-right">Войти</button>
+        <a href={% url 'blog-sign-up' %}>Нет аккаунта?</a>
+    </form>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block page %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% bootstrap_form article_form %}
+        <button type="submit">
+           Опубликовать
+        </button>
+    </form>
+{% endblock %}

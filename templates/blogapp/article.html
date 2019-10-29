@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% block page %}
+
+{#  Вывод статей  #}
+    <div class="card text-center">
+        <div class="card-header">
+             <p style="text-align: left"><a href="{% url 'blog-category' pk=article.category.id %}">{{ article.category }}</a></p>
+            {{ article.author }}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{ article.title }}</h5>
+            <p class="card-text">{{ article.text }}</p>
+        </div>
+        <div class="card-footer text-muted">
+            {{ article.date }}
+        </div>
+    </div>
+
+{#    Вывод комментариев   #}
+    <b>Комментарии:</b>
+    {% for comment in page_comments.object_list %}
+        {% if comment.moderation == True %}
+            <div class="card">
+                <div class="card-header">
+                    Пользователь - {{ comment.name }}
+                </div>
+                <div class="card-body">
+                    <blockquote class="blockquote mb-0">
+                        <p>{{ comment.content }}</p>
+                        <footer class="blockquote-footer"><cite title="Source Title">{{ comment.date }}</cite></footer>
+                    </blockquote>
+                </div>
+            </div>
+            <br>
+        {% endif %}
+    {% endfor %}
+
+{#  Форма для добавления комментариев только для авторизованых пользователей  #}
+    <br>
+    {% if request.user.is_authenticated %}
+        <form method="post" style='width: 30%'>
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <button onClick="alert('Ваш комментарий отправлен на модерацию');" type="submit" class="btn btn-primary">
+                Комментировать
+            </button>
+        </form>
+    {% else %}
+        <a href="{% url 'blog-sign-in' %}">Авторизуйтесь, чтобы оставить комментарий</a>
+    {% endif %}
+
+{#    Пагинация для комментариев #}
+    <br>
+    <nav>
+        <ul class="pagination justify-content-center" style="margin:20px 0">
+            {% for n in page_comments.paginator.page_range %}
+                {% if page_comments.number == n %}
+                    <li class="page-item active">
+                        <a class="page-link" href="?page={{ n }}">{{ n }} <span class="sr-only">(current)</span></a>
+                    </li>
+                {% elif n > page_comments.number|add:-3 and n < page_comments.number|add:3 %}
+                    <li class="page-item"><a class="page-link" href="?page={{ n }}">{{ n }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+{% endblock %}
